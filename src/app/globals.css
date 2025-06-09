@@ -1,0 +1,294 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: var(--font-inter), sans-serif;
+}
+
+@layer base {
+  :root {
+    /* New "Tech Interface" Theme based on user image */
+    --background: 220 40% 8%; /* Dark navy blue */
+    --foreground: 200 100% 90%; /* Very light cyan for primary text */
+    
+    --card: 220 35% 12%; /* Darker panel color */
+    --card-foreground: 200 100% 90%;
+
+    --popover: 220 35% 15%;
+    --popover-foreground: 200 100% 90%;
+
+    --primary: 185 90% 50%; /* Main bright cyan */
+    --primary-foreground: 220 40% 10%; /* Dark blue for text on primary buttons */
+    --primary-hsl: 185 90% 50%;
+
+    /* New Accent Colors from Reference */
+    --accent-orange: 30 100% 60%; /* Vibrant Orange */
+    --accent-pink: 330 90% 65%;   /* Bright Pink/Magenta */
+    --accent-yellow: 45 100% 55%; /* Bright Yellow */
+
+    --secondary: var(--accent-orange); /* Orange as secondary action/highlight */
+    --secondary-foreground: 20 100% 15%; /* Darker orange for text */
+
+    --accent: var(--accent-pink); /* Pink/Magenta as main accent */
+    --accent-foreground: 0 0% 100%; /* White text on pink */
+    --accent-hsl: 330 90% 65%; 
+    
+    --xp-bar-fill: var(--accent-yellow); /* XP bar uses yellow */
+
+    --destructive: 0 80% 60%; /* Brighter Red for destructive actions */
+    --destructive-hsl: 0 80% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --muted: 220 30% 20%; /* Muted dark blue */
+    --muted-foreground: 200 60% 75%; /* Muted Cyan for less important text */
+
+    --border: 190 70% 35%; /* Cyan-ish border for panels */
+    --input: 220 30% 18%; /* Dark blue for input backgrounds - good for progress bar tracks */
+    --ring: 185 90% 60%; /* Cyan for focus rings */
+    
+    --chart-1: 185 76% 61%;
+    --chart-2: var(--accent-orange);
+    --chart-3: var(--accent-pink);
+    --chart-4: 210 74% 66%;
+    --chart-5: 170 87% 67%;
+    --radius: 0.15rem; /* Sharper corners */
+
+    /* Tier Glow Colors for Cards - updated */
+    --tier-common-glow-hsl: 200 50% 60%; /* Softer Light Greyish Blue */
+    --tier-rare-glow-hsl: 185 90% 55%;  /* Cyan - Use new primary slightly desaturated for glow */
+    --tier-epic-glow-hsl: 330 90% 70%;  /* Pink/Magenta - Use new accent */
+    --tier-legendary-glow-hsl: 30 100% 65%; /* Gold/Orange - Use accent-orange */
+
+    /* Hologram background base color for cards */
+    --card-hologram-bg-hsl: 220 40% 6%; /* Even darker base for hologram cards */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}
+
+/* Hologram background for cards */
+.hologram-bg {
+  position: relative;
+  overflow: hidden;
+  /* background-color is now set inline in CardSelectionDialog.tsx */
+  z-index: 0; /* Ensure this is below content */
+}
+
+.hologram-bg::before { /* Scanlines */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 2px,
+    hsla(var(--primary-hsl), 0.08) 3px, /* Softer scanlines */
+    hsla(var(--primary-hsl), 0.08) 4px,
+    transparent 5px
+  );
+  background-size: 100% 7px; 
+  animation: scanlines-vertical 4s linear infinite;
+  opacity: 0.4; /* Reduced opacity */
+  pointer-events: none;
+  z-index: -1; /* Behind card's direct children */
+}
+
+@keyframes scanlines-vertical {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 28px; } 
+}
+
+/* Enhanced HUD panel styling */
+.hud-panel-base {
+  @apply bg-card border-2 rounded-sm relative;
+  border-color: hsla(var(--primary-hsl), 0.7); /* Default border color */
+  box-shadow: 0 0 12px hsla(var(--primary-hsl), 0.3), inset 0 0 8px hsla(var(--primary-hsl), 0.2);
+}
+
+/* Corner Details for HUD Panels - slightly thicker and more prominent */
+.hud-panel-base::before,
+.hud-panel-base::after {
+  content: '';
+  position: absolute;
+  width: 16px; /* Increased size */
+  height: 16px;
+  border-color: hsla(var(--primary-hsl), 0.8); /* Brighter corner */
+  pointer-events: none; 
+}
+
+/* Top-left corner bracket */
+.hud-panel-base::before {
+  top: -2px; 
+  left: -2px;
+  border-top: 3px solid hsla(var(--primary-hsl), 0.8); /* Thicker */
+  border-left: 3px solid hsla(var(--primary-hsl), 0.8);
+}
+
+/* Bottom-right corner bracket */
+.hud-panel-base::after {
+  bottom: -2px;
+  right: -2px;
+  border-bottom: 3px solid hsla(var(--primary-hsl), 0.8); /* Thicker */
+  border-right: 3px solid hsla(var(--primary-hsl), 0.8);
+}
+
+/* Additional decorative lines for hud-panels */
+.hud-panel-lines::before, .hud-panel-lines::after {
+  content: '';
+  position: absolute;
+  background-color: hsla(var(--primary-hsl), 0.3);
+  pointer-events: none;
+}
+.hud-panel-lines.horizontal-lines::before { /* Top line */
+  top: 6px; left: 20px; right: 20px; height: 1px;
+}
+.hud-panel-lines.horizontal-lines::after { /* Bottom line */
+  bottom: 6px; left: 20px; right: 20px; height: 1px;
+}
+.hud-panel-lines.vertical-lines::before { /* Left line */
+  left: 6px; top: 20px; bottom: 20px; width: 1px;
+}
+.hud-panel-lines.vertical-lines::after { /* Right line */
+  right: 6px; top: 20px; bottom: 20px; width: 1px;
+}
+
+
+/* Shake animation for UI elements */
+.shake-effect {
+  animation: shake-horizontal 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  transform: translate3d(0, 0, 0);
+}
+
+@keyframes shake-horizontal {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+  40%, 60% { transform: translate3d(3px, 0, 0); }
+}
+
+/* Glow effect for health bar on damage */
+.glow-red-temporary {
+  box-shadow: 0 0 18px hsl(var(--destructive-hsl)), 0 0 30px hsl(var(--destructive-hsl)), inset 0 0 12px hsla(var(--destructive-hsl), 0.4);
+  border-color: hsl(var(--destructive-hsl)) !important; 
+}
+
+.PausedM {
+  top: 0 !important;
+  margin-top: -25% !important;
+  max-height: 70vh !important;
+}
+
+.UpgradePanel {
+  top: 0 !important;
+  margin-top: -30% !important;
+}
+
+.GameOver { 
+  top: 0 !important;
+  margin-top: -30% !important;
+}
+
+.ExpBar{
+  max-width: 97.8vw !important;
+  margin-left: 1rem;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  align-self: self-start;
+  width: 100% !important;
+}
+
+.animated-gradient-overlay {
+  content: ""; 
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    135deg,
+    hsla(var(--primary-hsl), 0.2), 
+    hsla(var(--accent-orange), 0.25), /* Orange */
+    hsla(var(--accent-pink), 0.2),   /* Pink */
+    hsla(240, 60%, 30%, 0.25), 
+    hsla(var(--primary-hsl), 0.2) 
+  );
+  background-size: 400% 400%; 
+  animation: gradientFlowAnimation 12s ease infinite;
+  mix-blend-mode: overlay; 
+  pointer-events: none;
+  z-index: 1; 
+}
+
+@keyframes gradientFlowAnimation {
+  0% { background-position: 0% 0%; }
+  25% { background-position: 100% 0%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+/* Techy borders for stat items and special attack icons */
+.tech-item-border {
+  @apply border rounded-sm p-0.5;
+  border-color: hsla(var(--primary-hsl), 0.3);
+  background-color: hsla(var(--card), 0.5);
+  transition: all 0.2s ease-in-out;
+}
+.tech-item-border:hover {
+  border-color: hsla(var(--primary-hsl), 0.7);
+  box-shadow: 0 0 5px hsla(var(--primary-hsl), 0.4);
+}
+
+/* Progress bar styling enhancements */
+.hud-progress-bar .progress-track {
+  @apply bg-input rounded-sm; /* Ensure track has sharp corners and themed bg */
+}
+.hud-progress-bar .progress-fill-health {
+  @apply bg-primary rounded-sm; /* Cyan fill for health */
+  box-shadow: 0 0 8px hsla(var(--primary-hsl), 0.5);
+}
+.hud-progress-bar .progress-fill-xp {
+  @apply bg-[hsl(var(--xp-bar-fill))] rounded-sm; /* Yellow/Orange fill for XP */
+  box-shadow: 0 0 8px hsla(var(--xp-bar-fill), 0.5);
+}
+
+/* Decorative lines for stat blocks (health/xp) */
+.stat-block-decoration {
+  position: relative;
+  padding: 0.5rem; /* Add some padding so lines are not on edge */
+  border: 1px solid hsla(var(--primary-hsl), 0.2);
+}
+.stat-block-decoration::before, .stat-block-decoration::after {
+  content: '';
+  position: absolute;
+  background-color: hsla(var(--primary-hsl), 0.5);
+}
+/* Horizontal lines */
+.stat-block-decoration::before {
+  top: 2px; left: 10%; right: 10%; height: 1px;
+}
+.stat-block-decoration::after {
+  bottom: 2px; left: 10%; right: 10%; height: 1px;
+}
+/* Vertical "ticks" (example) */
+.stat-block-decoration > div::before { /* Targeting inner div for ticks relative to text */
+  content: '';
+  position: absolute;
+  left: -8px; top: 25%; height: 50%; width: 2px;
+  background-color: hsla(var(--accent-orange), 0.7);
+}
+
+    
